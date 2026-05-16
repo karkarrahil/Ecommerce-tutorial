@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopDrop — Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    body { font-family: 'DM Sans', sans-serif; background: #0e0e0e; }
+    h1, h2, .brand { font-family: 'Playfair Display', serif; }
+
+    /* Subtle noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    .product-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(234,179,8,0.12);
+    }
+
+    .add-btn {
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+    }
+    .add-btn:hover { transform: scale(1.04); }
+    .add-btn:active { transform: scale(0.97); }
+
+    .qty-btn {
+      transition: background 0.15s, transform 0.1s;
+    }
+    .qty-btn:hover { background: #eab308; color: #0e0e0e; transform: scale(1.1); }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 9999px; }
+
+    .tag { letter-spacing: 0.12em; font-size: 0.65rem; }
+    .price-tag { font-family: 'Playfair Display', serif; }
+    .checkout-btn { transition: background 0.2s, letter-spacing 0.2s; }
+    .checkout-btn:hover { letter-spacing: 0.12em; background: #ca8a04; }
+  </style>
+</head>
+<body class="min-h-screen text-white relative z-10">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-[#0e0e0e]/90 backdrop-blur border-b border-white/10 px-6 py-4 flex items-center justify-between">
+    <span class="brand text-2xl tracking-tight text-yellow-400">ShopDrop<span class="text-white">.</span></span>
+    <nav class="hidden md:flex gap-6 text-sm text-white/50 font-light">
+      <a href="#" class="hover:text-white transition">New Arrivals</a>
+      <a href="#" class="hover:text-white transition">Collections</a>
+      <a href="#" class="hover:text-white transition">About</a>
+    </nav>
+    <div class="text-sm text-white/40 font-light">Spring 2026</div>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="flex h-[calc(100vh-65px)]">
+
+    <!-- ════════════════════════════════════════
+         LEFT — Product Listing
+    ════════════════════════════════════════ -->
+    <section class="w-full md:w-[58%] lg:w-[62%] overflow-y-auto p-6 border-r border-white/10">
+
+      <!-- Section Header -->
+      <div class="mb-6">
+        <p class="tag text-yellow-400 uppercase tracking-widest mb-1">All Products</p>
+        <h2 class="text-3xl font-black leading-tight">This Season's <br><span class="text-yellow-400">Finest Picks</span></h2>
+      </div>
+
+      <!-- Filter Bar (design only) -->
+      <div class="flex gap-2 mb-6 flex-wrap">
+        <button class="px-4 py-1.5 rounded-full text-xs bg-yellow-400 text-black font-medium">All</button>
+        <button class="px-4 py-1.5 rounded-full text-xs bg-white/5 hover:bg-white/10 border border-white/10 transition">Tops</button>
+        <button class="px-4 py-1.5 rounded-full text-xs bg-white/5 hover:bg-white/10 border border-white/10 transition">Bottoms</button>
+        <button class="px-4 py-1.5 rounded-full text-xs bg-white/5 hover:bg-white/10 border border-white/10 transition">Accessories</button>
+        <button class="px-4 py-1.5 rounded-full text-xs bg-white/5 hover:bg-white/10 border border-white/10 transition">Footwear</button>
+      </div>
+
+      <!-- Product Grid -->
+      <div id="product-list" class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      </div>
+      <!-- End Product Grid -->
+
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+         RIGHT — Cart
+    ════════════════════════════════════════ -->
+    <aside class="hidden md:flex flex-col w-[42%] lg:w-[38%] bg-[#111] overflow-y-auto">
+
+      <!-- Cart Header -->
+      <div class="px-6 pt-6 pb-4 border-b border-white/10">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="tag text-yellow-400 uppercase tracking-widest mb-1">Your Cart</p>
+            <h2 class="text-2xl font-black">Review Order</h2>
+          </div>
+          <!-- Cart item count badge — update count with JS -->
+          <span id="cart-count" class="bg-yellow-400 text-black text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center">3</span>
+        </div>
+      </div>
+
+      <!-- Cart Items List -->
+      <div id="cart-items" class="flex-1 px-6 py-4 flex flex-col gap-3">
+
+        <!-- Cart Item Template — repeat this block for each item in cart -->
+        <div class="cart-item bg-[#171717] border border-white/8 rounded-2xl p-3 flex gap-3 items-center">
+          <!-- Thumbnail -->
+          <div class="w-14 h-14 rounded-xl bg-[#1e1e1e] flex items-center justify-center text-2xl shrink-0">👟</div>
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium leading-tight truncate">Air Wave Runners</p>
+            <p class="text-yellow-400 price-tag text-base mt-0.5">$129</p>
+          </div>
+          <!-- Quantity Controls -->
+          <div class="flex items-center gap-1.5 shrink-0">
+            <!-- Wire decrement button with JS -->
+            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">−</button>
+            <!-- Update this quantity with JS -->
+            <span class="qty w-6 text-center text-sm font-semibold">1</span>
+            <!-- Wire increment button with JS -->
+            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">+</button>
+          </div>
+          <!-- Remove -->
+          <!-- Wire this button to remove item from cart -->
+          <button class="text-white/20 hover:text-red-400 transition ml-1 text-lg leading-none">✕</button>
+        </div>
+
+        <div class="cart-item bg-[#171717] border border-white/8 rounded-2xl p-3 flex gap-3 items-center">
+          <div class="w-14 h-14 rounded-xl bg-[#1e1e1e] flex items-center justify-center text-2xl shrink-0">👜</div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium leading-tight truncate">Canvas Tote Pro</p>
+            <p class="text-yellow-400 price-tag text-base mt-0.5">$49</p>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">−</button>
+            <span class="qty w-6 text-center text-sm font-semibold">2</span>
+            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">+</button>
+          </div>
+          <button class="text-white/20 hover:text-red-400 transition ml-1 text-lg leading-none">✕</button>
+        </div>
+
+        <div class="cart-item bg-[#171717] border border-white/8 rounded-2xl p-3 flex gap-3 items-center">
+          <div class="w-14 h-14 rounded-xl bg-[#1e1e1e] flex items-center justify-center text-2xl shrink-0">🧢</div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium leading-tight truncate">Retro Structured Cap</p>
+            <p class="text-yellow-400 price-tag text-base mt-0.5">$34</p>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">−</button>
+            <span class="qty w-6 text-center text-sm font-semibold">1</span>
+            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">+</button>
+          </div>
+          <button class="text-white/20 hover:text-red-400 transition ml-1 text-lg leading-none">✕</button>
+        </div>
+
+        <!-- Empty cart state (hide this div when there are items, show when cart is empty) -->
+        <div id="empty-cart" class="hidden flex-1 flex flex-col items-center justify-center py-12 text-center">
+          <div class="text-5xl mb-3">🛒</div>
+          <p class="text-white/40 text-sm">Your cart is empty.<br>Add something amazing!</p>
+        </div>
+
+      </div>
+      <!-- End Cart Items -->
+
+      <!-- Cart Summary & Checkout -->
+      <div class="px-6 pb-6 pt-2 border-t border-white/10 space-y-3">
+
+        <!-- Price Breakdown -->
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between text-white/50">
+            <span>Subtotal</span>
+            <!-- Update subtotal with JS -->
+            <span id="subtotal">$261.00</span>
+          </div>
+          <div class="flex justify-between text-white/50">
+            <span>Shipping</span>
+            <span class="text-green-400">Free</span>
+          </div>
+          <div class="flex justify-between text-white/50">
+            <span>Tax (10%)</span>
+            <!-- Update tax with JS -->
+            <span id="tax">$26.10</span>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t border-white/10 pt-3">
+          <div class="flex justify-between items-baseline">
+            <span class="font-semibold">Total</span>
+            <!-- Update total with JS -->
+            <span id="total" class="price-tag text-yellow-400 text-2xl">$287.10</span>
+          </div>
+        </div>
+
+        <!-- Promo Code Field -->
+        <div class="flex gap-2">
+          <input
+            type="text"
+            placeholder="Promo code"
+            class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm placeholder-white/25 focus:outline-none focus:border-yellow-400/50 transition"
+          />
+          <button class="px-4 py-2 rounded-xl bg-white/8 border border-white/10 text-xs font-medium hover:bg-white/12 transition">Apply</button>
+        </div>
+
+        <!-- Checkout Button -->
+        <!-- Wire this button to your checkout logic -->
+        <button class="checkout-btn w-full bg-yellow-400 text-black font-bold py-3.5 rounded-2xl text-sm uppercase tracking-wide">
+          Checkout →
+        </button>
+
+        <p class="text-center text-white/25 text-xs">Secure checkout · Free returns · 30-day guarantee</p>
+      </div>
+
+    </aside>
+    <!-- End Cart -->
+
+  </main>
+
+
+  <script  type="module" src="index.js"></script>
+</body>
+</html>
