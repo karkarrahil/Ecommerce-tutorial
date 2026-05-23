@@ -113,55 +113,7 @@
       <div id="cart-items" class="flex-1 px-6 py-4 flex flex-col gap-3">
 
         <!-- Cart Item Template — repeat this block for each item in cart -->
-        <div class="cart-item bg-[#171717] border border-white/8 rounded-2xl p-3 flex gap-3 items-center">
-          <!-- Thumbnail -->
-          <div class="w-14 h-14 rounded-xl bg-[#1e1e1e] flex items-center justify-center text-2xl shrink-0">👟</div>
-          <!-- Info -->
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium leading-tight truncate">Air Wave Runners</p>
-            <p class="text-yellow-400 price-tag text-base mt-0.5">$129</p>
-          </div>
-          <!-- Quantity Controls -->
-          <div class="flex items-center gap-1.5 shrink-0">
-            <!-- Wire decrement button with JS -->
-            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">−</button>
-            <!-- Update this quantity with JS -->
-            <span class="qty w-6 text-center text-sm font-semibold">1</span>
-            <!-- Wire increment button with JS -->
-            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">+</button>
-          </div>
-          <!-- Remove -->
-          <!-- Wire this button to remove item from cart -->
-          <button class="text-white/20 hover:text-red-400 transition ml-1 text-lg leading-none">✕</button>
-        </div>
 
-        <div class="cart-item bg-[#171717] border border-white/8 rounded-2xl p-3 flex gap-3 items-center">
-          <div class="w-14 h-14 rounded-xl bg-[#1e1e1e] flex items-center justify-center text-2xl shrink-0">👜</div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium leading-tight truncate">Canvas Tote Pro</p>
-            <p class="text-yellow-400 price-tag text-base mt-0.5">$49</p>
-          </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">−</button>
-            <span class="qty w-6 text-center text-sm font-semibold">2</span>
-            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">+</button>
-          </div>
-          <button class="text-white/20 hover:text-red-400 transition ml-1 text-lg leading-none">✕</button>
-        </div>
-
-        <div class="cart-item bg-[#171717] border border-white/8 rounded-2xl p-3 flex gap-3 items-center">
-          <div class="w-14 h-14 rounded-xl bg-[#1e1e1e] flex items-center justify-center text-2xl shrink-0">🧢</div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium leading-tight truncate">Retro Structured Cap</p>
-            <p class="text-yellow-400 price-tag text-base mt-0.5">$34</p>
-          </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">−</button>
-            <span class="qty w-6 text-center text-sm font-semibold">1</span>
-            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">+</button>
-          </div>
-          <button class="text-white/20 hover:text-red-400 transition ml-1 text-lg leading-none">✕</button>
-        </div>
 
         <!-- Empty cart state (hide this div when there are items, show when cart is empty) -->
         <div id="empty-cart" class="hidden flex-1 flex flex-col items-center justify-center py-12 text-center">
