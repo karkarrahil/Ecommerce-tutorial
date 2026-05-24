@@ -5,14 +5,7 @@ const productList = document.getElementById('product-list');
 const cartItems = document.getElementById("cart-items");
 
 
-const cartItemsData = [{
-  "id": 1,
-  "name": "Air Wave Runners",
-  "category": "Footwear",
-  "price": 129,
-  "emoji": "👟",
-  "badge": "New"
-},];
+const cartItemsData = [];
 
 //listing of product is complete
 const productGrid = productData.map((product) => {
@@ -31,7 +24,7 @@ const productGrid = productData.map((product) => {
             <div class="flex items-center justify-between mt-auto">
               <span class="price-tag text-yellow-400 text-lg">$${product.price.toFixed(2)}</span>
               <!-- Wire up this button with JS: add item to cart -->
-              <button class="add-btn bg-yellow-400 hover:bg-yellow-300 text-black text-xs font-semibold px-3 py-1.5 rounded-full">
+              <button id=${product.id} class="add-btn bg-yellow-400 hover:bg-yellow-300 text-black text-xs font-semibold px-3 py-1.5 rounded-full">
                 + Add
               </button>
             </div>
@@ -41,28 +34,49 @@ const productGrid = productData.map((product) => {
 
 productList.innerHTML = productGrid.join("")
 
-const cartItemsGrid = cartItemsData.map((item) => `
-   <div class="cart-item bg-[#171717] border border-white/8 rounded-2xl p-3 flex gap-3 items-center">
-          <!-- Thumbnail -->
-          <div class="w-14 h-14 rounded-xl bg-[#1e1e1e] flex items-center justify-center text-2xl shrink-0">👟</div>
-          <!-- Info -->
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium leading-tight truncate">Air Wave Runners</p>
-            <p class="text-yellow-400 price-tag text-base mt-0.5">$129</p>
-          </div>
-          <!-- Quantity Controls -->
-          <div class="flex items-center gap-1.5 shrink-0">
-            <!-- Wire decrement button with JS -->
-            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">−</button>
-            <!-- Update this quantity with JS -->
-            <span class="qty w-6 text-center text-sm font-semibold">1</span>
-            <!-- Wire increment button with JS -->
-            <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">+</button>
-          </div>
-          <!-- Remove -->
-          <!-- Wire this button to remove item from cart -->
-          <button class="text-white/20 hover:text-red-400 transition ml-1 text-lg leading-none">✕</button>
-        </div>
-`);
 
-cartItems.innerHTML = cartItemsGrid.join("")
+const addProductListner = productList.addEventListener('click', (e) => {
+  if (e.target.id) {
+    const product = productData.find((product) => product.id == event.target.id)
+    const hasProductAlreadyInCart = cartItemsData.find((product) => product.id == event.target.id);
+    if (hasProductAlreadyInCart) {
+      hasProductAlreadyInCart.quantity++;
+      hasProductAlreadyInCart.price = product.price * hasProductAlreadyInCart.quantity.toFixed(2)
+      updateCartData()
+      return;
+    }
+    cartItemsData.push({ ...product, quantity: 1 })
+    updateCartData()
+  }
+})
+
+
+function updateCartData() {
+  const cartItemsGrid = cartItemsData.map((item) => `
+     <div class="cart-item bg-[#171717] border border-white/8 rounded-2xl p-3 flex gap-3 items-center">
+            <!-- Thumbnail -->
+            <div class="w-14 h-14 rounded-xl bg-[#1e1e1e] flex items-center justify-center text-2xl shrink-0">${item.emoji}</div>
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium leading-tight truncate">${item.name}</p>
+              <p class="text-yellow-400 price-tag text-base mt-0.5">$${item.price.toFixed(2)}</p>
+            </div>
+            <!-- Quantity Controls -->
+            <div class="flex items-center gap-1.5 shrink-0">
+              <!-- Wire decrement button with JS -->
+              <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">−</button>
+              <!-- Update this quantity with JS -->
+              <span class="qty w-6 text-center text-sm font-semibold">${item.quantity}</span>
+              <!-- Wire increment button with JS -->
+              <button class="qty-btn w-7 h-7 rounded-full bg-white/8 border border-white/10 text-sm flex items-center justify-center font-bold">+</button>
+            </div>
+            <!-- Remove -->
+            <!-- Wire this button to remove item from cart -->
+            <button class="text-white/20 hover:text-red-400 transition ml-1 text-lg leading-none">✕</button>
+          </div>
+  `);
+
+  cartItems.innerHTML = cartItemsGrid.join("")
+
+}
+
